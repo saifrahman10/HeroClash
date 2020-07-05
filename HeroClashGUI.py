@@ -1,5 +1,7 @@
 import time
 from tkinter import *
+from tkinter.ttk import Progressbar
+
 from PIL import Image, ImageTk
 import random
 
@@ -50,24 +52,37 @@ def HeroClashFight(hero1,hero2):
 
     # Check which disable/enables are required
     def changebuttonstates(hero):
-        if hero == hero1:
+        if hero1.ai and hero2.ai:
+            hero1disabled(), hero2disabled()
+        elif hero1.ai:
+            hero1disabled(), hero2enabled()
+        elif hero2.ai:
+            hero2disabled(), hero1enabled()
+        elif hero == hero1:
             hero1disabled(), hero2enabled()
         elif hero == hero2:
             hero2disabled(), hero1enabled()
+
     def ai_move():
         if hero1.ai == True:
             time.sleep(0.5)
-            buttonClick(random.choice(hero1buttons), hero1, Hero2_health)
+            buttonClick(random.choice(hero1buttons), hero1)
         if hero2.ai == True:
             time.sleep(0.5)
-            buttonClick(random.choice(hero2buttons), hero2, Hero1_health)
+            buttonClick(random.choice(hero2buttons), hero2)
+
+    def herohealthUpdate(hero):
+        if hero == hero1:
+            hero2_health['value'] = hero2.health
+        elif hero == hero2:
+            hero1_health['value'] = hero1.health
 
     # Resets fight for next round
     def fightReset():
         hero1.health, hero2.health = 100,100
-        Hero1_health.set(hero1.health), Hero2_health.set(hero2.health)
+        hero1_health['value'], hero2_health['value'] = 100,100
 
-    def buttonClick(buttons, hero, enemyhealth):
+    def buttonClick(buttons, hero):
         miss=False
         if buttons['text'] == 'None':
             miss=True
@@ -78,17 +93,17 @@ def HeroClashFight(hero1,hero2):
         if buttons['text'] != 'None' and not miss:
             hero.attack(buttons['text'].split(':')[0])
             currentturn_text.set(hero.name + ' used ' + buttons['text'].split(':')[0] + '! ' + hero.enemy.name + '\'s turn!')
+            herohealthUpdate(hero)
             if hero.enemy.health > 0: # Regular attack, enemy still alive
-                enemyhealth.set(hero.enemy.health)
                 if hero.enemy.ai == True:
                     ai_move()
             elif hero.enemy.health <= 0: # Enemy defeated
-                enemyhealth.set(0)
                 hero.wins += 1
                 # Check if the hero has 2 wins, if so, game over.
                 if hero.wins == 2:
                     if hero == hero1:
                         hero1toptext.set('Wins: 2')
+                        hero2_health['value'] = hero2.health
                     elif hero == hero2:
                         hero2toptext.set('Wins: 2')
                     disableAll()
@@ -106,15 +121,18 @@ def HeroClashFight(hero1,hero2):
             currentturn_text.set(hero.name + ' missed! ' + hero.enemy.name + '\'s turn!')
             if hero.enemy.ai == True:
                 ai_move()
+
         if hero.wins != 2:
-            if hero1.ai and hero2.ai:
-                hero1disabled(), hero2disabled()
-            elif hero1.ai:
-                hero1disabled(), hero2enabled()
-            elif hero2.ai:
-                hero2disabled(), hero1enabled()
-            else:
-                changebuttonstates(hero)
+            changebuttonstates(hero)
+            # if hero1.ai and hero2.ai:
+            #     hero1disabled(), hero2disabled()
+            # elif hero1.ai:
+            #     hero1disabled(), hero2enabled()
+            # elif hero2.ai:
+            #     hero2disabled(), hero1enabled()
+            # else:
+            #     changebuttonstates(hero)
+
     # Labels each button according to hero moves.
     def label_moves(movebuttons, hero):
         moves = list(hero.power.keys())
@@ -170,15 +188,13 @@ def HeroClashFight(hero1,hero2):
     Hero2_Label.grid(row=3,column=2)
 
     # Meta Health Labels
-    Hero1_health = StringVar()
-    Hero1_health.set(str(hero1.health))
-    Hero1_health_label = Label(textvariable=Hero1_health)
-    Hero1_health_label.grid(row=4, column=0)
+    hero1_health = Progressbar(tk, orient=HORIZONTAL, length=100, mode='determinate')
+    hero1_health.grid(row=4,column=0)
+    hero1_health['value'] = 100
 
-    Hero2_health = StringVar()
-    Hero2_health.set(str(hero2.health))
-    Hero2_health_label = Label(textvariable=Hero2_health)
-    Hero2_health_label.grid(row=4, column=2)
+    hero2_health = Progressbar(tk, orient=HORIZONTAL, length=100, mode='determinate')
+    hero2_health.grid(row=4,column=2)
+    hero2_health['value'] = 100
 
     # Move Labels
     Move1_Label = Label(text='Moves', height=2, width=20).grid(row=5,column=0)
@@ -192,13 +208,13 @@ def HeroClashFight(hero1,hero2):
     label_moves([hero1mv1,hero1mv2,hero1mv3,hero1mv4], hero1)
 
     # Buttons for hero 1 moves, corresponding to button labels above
-    hero1_mvbutton1 = Button(tk, textvariable=hero1mv1, height=2, width=20, command=lambda: buttonClick(hero1_mvbutton1, hero1, Hero2_health))
+    hero1_mvbutton1 = Button(tk, textvariable=hero1mv1, height=2, width=20, command=lambda: buttonClick(hero1_mvbutton1, hero1))
     hero1_mvbutton1.grid(row=6,column=0)
-    hero1_mvbutton2 = Button(tk, textvariable=hero1mv2, height=2, width=20, command=lambda: buttonClick(hero1_mvbutton2, hero1, Hero2_health))
+    hero1_mvbutton2 = Button(tk, textvariable=hero1mv2, height=2, width=20, command=lambda: buttonClick(hero1_mvbutton2, hero1))
     hero1_mvbutton2.grid(row=7,column=0)
-    hero1_mvbutton3 = Button(tk, textvariable=hero1mv3, height=2, width=20, command=lambda: buttonClick(hero1_mvbutton3, hero1, Hero2_health))
+    hero1_mvbutton3 = Button(tk, textvariable=hero1mv3, height=2, width=20, command=lambda: buttonClick(hero1_mvbutton3, hero1))
     hero1_mvbutton3.grid(row=8,column=0)
-    hero1_mvbutton4 = Button(tk, textvariable=hero1mv4, height=2, width=20, command=lambda: buttonClick(hero1_mvbutton4, hero1, Hero2_health))
+    hero1_mvbutton4 = Button(tk, textvariable=hero1mv4, height=2, width=20, command=lambda: buttonClick(hero1_mvbutton4, hero1))
     hero1_mvbutton4.grid(row=9,column=0)
 
     # Hero 1 button list
@@ -212,13 +228,13 @@ def HeroClashFight(hero1,hero2):
     label_moves([hero2mv1,hero2mv2,hero2mv3,hero2mv4], hero2)
 
     # Buttons for hero 2 moves, corresponding to button labels above
-    hero2_mvbutton1 = Button(tk, textvariable=hero2mv1, height=2, width=20, command=lambda: buttonClick(hero2_mvbutton1, hero2, Hero1_health))
+    hero2_mvbutton1 = Button(tk, textvariable=hero2mv1, height=2, width=20, command=lambda: buttonClick(hero2_mvbutton1, hero2))
     hero2_mvbutton1.grid(row=6,column=2)
-    hero2_mvbutton2 = Button(tk, textvariable=hero2mv2, height=2, width=20, command=lambda: buttonClick(hero2_mvbutton2, hero2, Hero1_health))
+    hero2_mvbutton2 = Button(tk, textvariable=hero2mv2, height=2, width=20, command=lambda: buttonClick(hero2_mvbutton2, hero2))
     hero2_mvbutton2.grid(row=7,column=2)
-    hero2_mvbutton3 = Button(tk, textvariable=hero2mv3, height=2, width=20, command=lambda: buttonClick(hero2_mvbutton3, hero2, Hero1_health))
+    hero2_mvbutton3 = Button(tk, textvariable=hero2mv3, height=2, width=20, command=lambda: buttonClick(hero2_mvbutton3, hero2))
     hero2_mvbutton3.grid(row=8,column=2)
-    hero2_mvbutton4 = Button(tk, textvariable=hero2mv4, height=2, width=20, command=lambda: buttonClick(hero2_mvbutton4, hero2, Hero1_health))
+    hero2_mvbutton4 = Button(tk, textvariable=hero2mv4, height=2, width=20, command=lambda: buttonClick(hero2_mvbutton4, hero2))
     hero2_mvbutton4.grid(row=9,column=2)
 
     # Hero 2 button list
