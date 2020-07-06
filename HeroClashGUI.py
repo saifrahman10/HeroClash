@@ -80,19 +80,20 @@ def HeroClashFight(hero1,hero2):
                 # Check if the hero has 2 wins, if so, game over.
                 if hero.wins == 2:
                     if hero == hero1:
-                        hero1toptext.set('Wins: 2')
+                        hero1toptext.set('WINS: 2')
                         hero2_health['value'] = hero2.health
                     elif hero == hero2:
-                        hero2toptext.set('Wins: 2')
+                        hero2toptext.set('WINS: 2')
                     hero1disabled(), hero2disabled()
-                    fight_text.set('Game Over\n' + hero.name + ' Wins!')
+                    fight_text.set('GAME OVER')
+                    currentturn_text.set(hero.name + ' WINS!')
                     fight_label.configure(fg=hero.color)
                 elif hero.wins != 2:
                     fight_text.set('Round ' + str(hero.wins + hero.enemy.wins + 1) + '\nFight!')
                     if hero == hero1:
-                        hero1toptext.set('Wins: 1')
+                        hero1toptext.set('WINS: 1')
                     elif hero == hero2:
-                        hero2toptext.set('Wins: 1')
+                        hero2toptext.set('WINS: 1')
                     time.sleep(1) # Delay for each round
                     fightReset()
         if miss:
@@ -115,12 +116,12 @@ def HeroClashFight(hero1,hero2):
     fight_label.grid(row=0, column=1)
 
     hero1toptext = StringVar()
-    hero1toptext.set('Wins: 0')
+    hero1toptext.set('WINS: 0')
     hero1toplabel = Label(tk, textvariable=hero1toptext, fg=hero1.color)
     hero1toplabel.grid(row=0,column=0)
 
     hero2toptext = StringVar()
-    hero2toptext.set('Wins: 0')
+    hero2toptext.set('WINS: 0')
     hero2toplabel = Label(tk, textvariable=hero2toptext, fg=hero2.color)
     hero2toplabel.grid(row=0,column=2)
 
