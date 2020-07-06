@@ -1,54 +1,34 @@
 import time
 from tkinter import *
+from tkinter import ttk
 from tkinter.ttk import Progressbar
-
 from PIL import Image, ImageTk
 import random
 
 # Function to create main window
 def HeroClashFight(hero1,hero2):
     tk = Tk()
-    tk.geometry('435x515')
+    tk.geometry('435x510')
     tk.title(hero1.name + ' vs ' + hero2.name)
-    hero1.setEnemy(hero2)
-    hero2.setEnemy(hero1)
-
-    # Disables all button for game over state
-    def disableAll():
-        hero1_mvbutton1.configure(state=DISABLED)
-        hero1_mvbutton2.configure(state=DISABLED)
-        hero1_mvbutton3.configure(state=DISABLED)
-        hero1_mvbutton4.configure(state=DISABLED)
-        hero2_mvbutton1.configure(state=DISABLED)
-        hero2_mvbutton2.configure(state=DISABLED)
-        hero2_mvbutton3.configure(state=DISABLED)
-        hero2_mvbutton4.configure(state=DISABLED)
+    hero1.setEnemy(hero2), hero2.setEnemy(hero1)
 
     # Disable Hero 1 Moves during Hero 2 turn
     def hero1disabled():
-        hero1_mvbutton1.configure(state=DISABLED)
-        hero1_mvbutton2.configure(state=DISABLED)
-        hero1_mvbutton3.configure(state=DISABLED)
-        hero1_mvbutton4.configure(state=DISABLED)
+        for button in hero1buttons:
+            button.configure(state=DISABLED)
 
-    # Disable Hero 2 Moves during Hero 1 turn
+    # Disable and Enable moves functions
     def hero2disabled():
-        hero2_mvbutton1.configure(state=DISABLED)
-        hero2_mvbutton2.configure(state=DISABLED)
-        hero2_mvbutton3.configure(state=DISABLED)
-        hero2_mvbutton4.configure(state=DISABLED)
+        for button in hero2buttons:
+            button.configure(state=DISABLED)
 
     def hero1enabled():
-        hero1_mvbutton1.configure(state=NORMAL)
-        hero1_mvbutton2.configure(state=NORMAL)
-        hero1_mvbutton3.configure(state=NORMAL)
-        hero1_mvbutton4.configure(state=NORMAL)
+        for button in hero1buttons:
+            button.configure(state=NORMAL)
 
     def hero2enabled():
-        hero2_mvbutton1.configure(state=NORMAL)
-        hero2_mvbutton2.configure(state=NORMAL)
-        hero2_mvbutton3.configure(state=NORMAL)
-        hero2_mvbutton4.configure(state=NORMAL)
+        for button in hero2buttons:
+            button.configure(state=NORMAL)
 
     # Check which disable/enables are required
     def changebuttonstates(hero):
@@ -65,10 +45,8 @@ def HeroClashFight(hero1,hero2):
 
     def ai_move():
         if hero1.ai == True:
-            time.sleep(0.5)
             buttonClick(random.choice(hero1buttons), hero1)
         if hero2.ai == True:
-            time.sleep(0.5)
             buttonClick(random.choice(hero2buttons), hero2)
 
     def herohealthUpdate(hero):
@@ -106,7 +84,7 @@ def HeroClashFight(hero1,hero2):
                         hero2_health['value'] = hero2.health
                     elif hero == hero2:
                         hero2toptext.set('Wins: 2')
-                    disableAll()
+                    hero1disabled(), hero2disabled()
                     fight_text.set('Game Over\n' + hero.name + ' Wins!')
                     fight_label.configure(fg=hero.color)
                 elif hero.wins != 2:
@@ -121,17 +99,8 @@ def HeroClashFight(hero1,hero2):
             currentturn_text.set(hero.name + ' missed! ' + hero.enemy.name + '\'s turn!')
             if hero.enemy.ai == True:
                 ai_move()
-
         if hero.wins != 2:
             changebuttonstates(hero)
-            # if hero1.ai and hero2.ai:
-            #     hero1disabled(), hero2disabled()
-            # elif hero1.ai:
-            #     hero1disabled(), hero2enabled()
-            # elif hero2.ai:
-            #     hero2disabled(), hero1enabled()
-            # else:
-            #     changebuttonstates(hero)
 
     # Labels each button according to hero moves.
     def label_moves(movebuttons, hero):
@@ -187,7 +156,7 @@ def HeroClashFight(hero1,hero2):
     Hero2_Label = Label(text=hero2.name, fg=hero2.color, height=2, width=20)
     Hero2_Label.grid(row=3,column=2)
 
-    # Meta Health Labels
+    # Hero Health Bars
     hero1_health = Progressbar(tk, orient=HORIZONTAL, length=100, mode='determinate')
     hero1_health.grid(row=4,column=0)
     hero1_health['value'] = 100
@@ -197,8 +166,8 @@ def HeroClashFight(hero1,hero2):
     hero2_health['value'] = 100
 
     # Move Labels
-    Move1_Label = Label(text='Moves', height=2, width=20).grid(row=5,column=0)
-    Move2_Label = Label(text='Moves', height=2, width=20).grid(row=5, column=2)
+    move1_label = Label(text='MOVES', height=2, width=20).grid(row=5,column=0)
+    move2_label = Label(text='MOVES', height=2, width=20).grid(row=5, column=2)
 
     # Initialize hero 1 button labels
     hero1mv1,hero1mv2,hero1mv3,hero1mv4=StringVar(),StringVar(),StringVar(),StringVar()
@@ -217,9 +186,6 @@ def HeroClashFight(hero1,hero2):
     hero1_mvbutton4 = Button(tk, textvariable=hero1mv4, height=2, width=20, command=lambda: buttonClick(hero1_mvbutton4, hero1))
     hero1_mvbutton4.grid(row=9,column=0)
 
-    # Hero 1 button list
-    hero1buttons = [hero1_mvbutton1, hero1_mvbutton2, hero1_mvbutton3, hero1_mvbutton4]
-
     # Initialize hero 2 button labels
     hero2mv1,hero2mv2,hero2mv3,hero2mv4=StringVar(),StringVar(),StringVar(),StringVar()
     hero2mv1.set('None'), hero2mv2.set('None'), hero2mv3.set('None'), hero2mv4.set('None')
@@ -237,7 +203,8 @@ def HeroClashFight(hero1,hero2):
     hero2_mvbutton4 = Button(tk, textvariable=hero2mv4, height=2, width=20, command=lambda: buttonClick(hero2_mvbutton4, hero2))
     hero2_mvbutton4.grid(row=9,column=2)
 
-    # Hero 2 button list
+    # Hero Button Lists
+    hero1buttons = [hero1_mvbutton1, hero1_mvbutton2, hero1_mvbutton3, hero1_mvbutton4]
     hero2buttons = [hero2_mvbutton1, hero2_mvbutton2, hero2_mvbutton3, hero2_mvbutton4]
 
     # Round 1 begins with hero 1's turn
