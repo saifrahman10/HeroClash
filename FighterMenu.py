@@ -124,38 +124,26 @@ choose_label = Label(tk, textvariable=choose_var)
 choose_label.grid(row=0,column=0, columnspan=3)
 
 # Hero setup
-batman_img = Image.open('Fighters/BatmanIcon.png')
-batman_img = batman_img.resize((100, 100), Image.ANTIALIAS)
 batman_img_resize = ImageTk.PhotoImage(batman_img)
 batman_button = Button(tk, image=batman_img_resize, command=lambda: buttonClick(tk, batman))
 batman_button.grid(row=1,column=0)
 
-joker_img = Image.open('Fighters/JokerIcon.png')
-joker_img = joker_img.resize((100,100),Image.ANTIALIAS)
 joker_img_resize = ImageTk.PhotoImage(joker_img)
 joker_button = Button(tk, image=joker_img_resize, command=lambda: buttonClick(tk, joker))
 joker_button.grid(row=1,column=1)
 
-superman_img = Image.open('Fighters/SupermanIcon.png')
-superman_img = superman_img.resize((100,100),Image.ANTIALIAS)
 superman_img_resize = ImageTk.PhotoImage(superman_img)
 superman_button = Button(tk, image=superman_img_resize, command=lambda: buttonClick(tk, superman))
 superman_button.grid(row=1,column=2)
 
-bane_img = Image.open('Fighters/BaneIcon.png')
-bane_img = bane_img.resize((100,100),Image.ANTIALIAS)
 bane_img_resize = ImageTk.PhotoImage(bane_img)
 bane_button = Button(tk, image=bane_img_resize, command=lambda: buttonClick(tk, bane))
 bane_button.grid(row=2,column=0)
 
-aquaman_img = Image.open('Fighters/AquamanIcon.png')
-aquaman_img = aquaman_img.resize((100,100),Image.ANTIALIAS)
 aquaman_img_resize = ImageTk.PhotoImage(aquaman_img)
 aquaman_button = Button(tk, image=aquaman_img_resize, command=lambda: buttonClick(tk, aquaman))
 aquaman_button.grid(row=2,column=1)
 
-darkseid_img = Image.open('Fighters/DarkseidIcon.png')
-darkseid_img = darkseid_img.resize((100,100),Image.ANTIALIAS)
 darkseid_img_resize = ImageTk.PhotoImage(darkseid_img)
 darkseid_button = Button(tk, image=darkseid_img_resize, command=lambda: buttonClick(tk, darkseid))
 darkseid_button.grid(row=2,column=2)
